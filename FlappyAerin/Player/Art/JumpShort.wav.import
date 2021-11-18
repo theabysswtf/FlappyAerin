@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/JumpShort.wav-6e05aab110af2f7c60e25192fd493f0b.sample"
+
+[deps]
+
+source_file="res://Player/Art/JumpShort.wav"
+dest_files=[ "res://.import/JumpShort.wav-6e05aab110af2f7c60e25192fd493f0b.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
