@@ -1,21 +1,41 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Map/Map.tscn" type="PackedScene" id=2]
+[ext_resource path="res://UI/UI.tscn" type="PackedScene" id=3]
+[ext_resource path="res://UI/IncreaseScore.wav" type="AudioStream" id=4]
+[ext_resource path="res://UI/NextPhase.wav" type="AudioStream" id=5]
 
 [node name="Node2D" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 160, 160 )
+position = Vector2( 240, 240 )
 current = true
-zoom = Vector2( 0.5, 0.5 )
+zoom = Vector2( 0.75, 0.75 )
 
-[node name="Node2D" parent="." instance=ExtResource( 1 )]
-position = Vector2( 50.1701, 63.7809 )
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 51.1701, 63.7809 )
+collision_mask = 6
+shot_speed = 240.0
+jump_speed = -240.0
+max_jump_duration = 250
 
 [node name="Map" parent="." instance=ExtResource( 2 )]
-msec_between_spawns = 1000
-min_separation = 32
-max_separation = 128
-initial_count = 5
-rate_of_motion = 5.0
+min_msec_between_spawns = 750
+max_msec_between_spawns = 2000
+spawn_time_reduction_per_increment = 100
+min_separation = 64
+max_separation = 256
+separation_decrease_per_increment = 32
+max_vertical_offset = 96
+min_rate_of_motion = 5.0
+max_rate_of_motion = 15.0
+acceleration_per_increment = 1.0
+
+[node name="SCOREUI" parent="." instance=ExtResource( 3 )]
+margin_right = 640.0
+margin_bottom = 640.0
+score_increment = 1
+score_increment_increment = 1
+score_sound = ExtResource( 4 )
+stage_sound = ExtResource( 5 )

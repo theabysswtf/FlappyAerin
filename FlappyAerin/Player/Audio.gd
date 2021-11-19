@@ -32,3 +32,9 @@ func return_to_pool(var ret : AudioStreamPlayer):
 
 func length() -> int:
 	return len(bag)
+
+func play(stream: AudioStream):
+	if stream:
+		var source : AudioStreamPlayer = get_next()
+		source.stream = stream
+		source.play()

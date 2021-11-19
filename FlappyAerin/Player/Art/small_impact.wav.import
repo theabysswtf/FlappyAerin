@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/small_impact.wav-5b5af023d973d95ed7e470a00a808327.sample"
+
+[deps]
+
+source_file="res://Player/Art/small_impact.wav"
+dest_files=[ "res://.import/small_impact.wav-5b5af023d973d95ed7e470a00a808327.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

@@ -8,14 +8,32 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "KinematicBody2D",
+"class": "Fireball",
+"language": "GDScript",
+"path": "res://Player/Fireball.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Player",
+"language": "GDScript",
+"path": "res://Player/Player.gd"
+}, {
+"base": "Control",
+"class": "SCOREUI",
+"language": "GDScript",
+"path": "res://UI/SCOREUI.gd"
+} ]
+_global_script_class_icons={
+"Fireball": "",
+"Player": "",
+"SCOREUI": ""
+}
+
 [application]
 
 config/name="Aerin"
 config/icon="res://icon.png"
-
-[autoload]
-
-Globals="*res://Globals.gd"
 
 [display]
 
@@ -65,9 +83,12 @@ Fire={
  ]
 }
 
-[memory]
+[layer_names]
 
-limits/message_queue/max_size_kb=8192
+2d_physics/layer_1="Player"
+2d_physics/layer_2="Terrain"
+2d_physics/layer_3="Enemy"
+2d_physics/layer_4="Fireball"
 
 [physics]
 
