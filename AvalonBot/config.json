@@ -1,0 +1,12 @@
+
+
+{
+    "BOT_TOKEN": "",    // Get this from the bot page
+    "SERVER_ID": "",    // Get this from the Discord app
+    "PREFIX": "+",
+    "MIN_PARTICIPANTS": 2,
+    "MAX_PARTICIPANTS": 3,
+    "THREAD_NAME": "Avalon-Quest",
+
+    "START_MESSAGE": "Use +start to begin the game!"
+}

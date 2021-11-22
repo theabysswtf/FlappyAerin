@@ -57,13 +57,14 @@ amount = 32
 lifetime = 0.75
 one_shot = true
 explosiveness = 1.0
-randomness = 0.3
+randomness = 0.45
 fixed_fps = 60
 process_material = SubResource( 6 )
 
 [node name="Trail" type="CPUParticles2D" parent="." groups=[
 "Fireball",
 ]]
+emitting = false
 amount = 32
 lifetime = 0.75
 explosiveness = 0.03

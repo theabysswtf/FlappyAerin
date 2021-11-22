@@ -32,6 +32,8 @@ func _ready():
 	set_active(false)
 	dead = false
 	gravity = fall_gravity
+	
+	print($Sprite.visible)
 
 # Physics
 func _physics_process(delta : float):

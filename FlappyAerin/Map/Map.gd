@@ -34,9 +34,7 @@ signal stage_incremented
 func _enter_tree():
 	var score_scene = get_node("/root/Node2D/SCOREUI")
 	connect("stage_incremented", score_scene, "increment_score_increment")
-	var cam_scene = get_node("/root/Node2D/Camera2D")
-	$PillarOrigin.position.y = cam_scene.position.y
-
+	
 func _ready():
 	time_of_last_spawn_msec = OS.get_ticks_msec()
 	msec_between_spawns = max_msec_between_spawns

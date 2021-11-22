@@ -15,8 +15,8 @@ func _enter_tree():
 	connect("impact", player_scene, "explosion_impact")
 	
 func activate():
-	$Trail.initial_velocity = velocity.length()
-	$Trail.direction = velocity / $Trail.initial_velocity
+	#$Trail.initial_velocity = velocity.length()
+	#$Trail.direction = velocity / $Trail.initial_velocity
 	$Sprite.visible = true
 	$Smoke.emitting = false
 	$Trail.emitting = true
@@ -33,11 +33,11 @@ func _physics_process(delta):
 		$Smoke.emitting = true
 		$Trail.emitting = false
 		
+		active = false
+		yield(get_tree().create_timer($Smoke.lifetime * 2), "timeout")
 		get_parent().remove_child(self)
 		collision.collider.add_child(self)
 		
-		active = false
-		yield(get_tree().create_timer($Smoke.lifetime), "timeout")
 		emit_signal("finished")
 		get_parent().remove_child(self)
 		

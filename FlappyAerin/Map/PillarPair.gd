@@ -17,7 +17,7 @@ func _enter_tree():
 	$PassArea.connect("body_entered", score_scene, "increment_score")
 
 func _physics_process(delta):
-	position += Vector2.LEFT * speed
+	position += Vector2.LEFT * speed * delta
 	
 	if position.x < -64:
 		emit_signal("finished")

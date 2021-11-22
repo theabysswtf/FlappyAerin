@@ -12,7 +12,7 @@ func _ready():
 	connect("impact", player_scene, "explosion_impact")
 	
 	
-func _on_Box_body_shape_entered(body_id, body, body_shape, local_shape):
+func _on_Box_body_shape_entered(_body_id, body, _body_shape, _local_shape):
 	if body is Fireball:
 		$Particles2D.emitting = true
 		$Sprite.visible = false

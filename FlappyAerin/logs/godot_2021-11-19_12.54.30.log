@@ -1,0 +1,16 @@
+Godot Engine v3.3.2.stable.official - https://godotengine.org
+OpenGL ES 3.0 Renderer: NVIDIA GeForce RTX 3070/PCIe/SSE2
+OpenGL ES Batching: ON
+ 
+**ERROR**: (Node not found: "/root/Node2D/Camera2D" (absolute path attempted from "/root/Node2D/Map").)
+   At: scene/main/node.cpp:1368:get_node() - Condition "!node" is true. Returned: __null
+**ERROR**: Condition "_first != __null" is true.
+   At: ./core/self_list.h:112:~List() - Condition "_first != __null" is true.
+**ERROR**: Condition "_first != __null" is true.
+   At: ./core/self_list.h:112:~List() - Condition "_first != __null" is true.
+**WARNING**: ObjectDB instances leaked at exit (run with --verbose for details).
+   At: core/object.cpp:2132:cleanup() - ObjectDB instances leaked at exit (run with --verbose for details).
+**ERROR**: Resources still in use at exit (run with --verbose for details).
+   At: core/resource.cpp:450:clear() - Resources still in use at exit (run with --verbose for details).
+**ERROR**: There are still MemoryPool allocs in use at exit!
+   At: core/pool_vector.cpp:66:cleanup() - Condition "allocs_used > 0" is true.

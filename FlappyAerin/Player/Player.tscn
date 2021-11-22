@@ -6,12 +6,10 @@
 [ext_resource path="res://Player/Art/big_impact.wav" type="AudioStream" id=4]
 [ext_resource path="res://Player/Art/JumpLong.wav" type="AudioStream" id=5]
 [ext_resource path="res://Player/FlameSpitter.gd" type="Script" id=6]
+[ext_resource path="res://Player/CharacterRough.png" type="Texture" id=7]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 16.0
-
-[sub_resource type="StreamTexture" id=2]
-load_path = "res://.import/CharacterRough.png-6ade2011501898f2260e66f55ff91629.stex"
 
 [node name="Player" type="KinematicBody2D" groups=[
 "Player",
@@ -28,7 +26,7 @@ boom_sound = ExtResource( 4 )
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = SubResource( 2 )
+texture = ExtResource( 7 )
 
 [node name="Audio" parent="." instance=ExtResource( 3 )]
 
