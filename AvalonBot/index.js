@@ -1,9 +1,11 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const config = require('./config.json');
+const tables = require('./game_tables.json');
 
 const client = new Discord.Client({ intents: ["GUILD_MESSAGES", "DIRECT_MESSAGES", "GUILDS"] });
-const active_games = {};
+const active_games_by_author = {};
+const active_games_by_channel = {};
 
 client.on("ready", () => {
     console.log("Logged in as " + client.user.tag + "!");
@@ -20,7 +22,9 @@ client.on("threadCreate", (thread) => {
 function Game(author, participants, channel) {
     this.thread_name = author.username + "'s " + config.THREAD_NAME;
     this.channel = channel;
+    this.author = author;
     this.participants = participants;
+    this.started = false;
 
     this.tostring = () => this.participants;
     this.open_thread = () => Promise.resolve(this.channel.threads.create({
@@ -33,7 +37,18 @@ function Game(author, participants, channel) {
         })
         this.thread = thread;
     }));
-    this.send_thread_message = (text) => Promise.resolve(this.thread.send(text));
+    this.populate_characters = (good, bad, merlin, assassin) => {
+        this.allies = good
+        this.minions = bad
+        this.merlin = merlin
+        this.assassin = assassin
+    }
+    this.close_thread = () => Promise.resolve(this.thread.delete( "Clearing Out Finished Thread" ) );
+    this.print_state = () => {
+        // This should just print out:
+        // Current score (Successes vs Fails, maybe like a sword?)
+        // Current state
+    }
 }
 
 // Pairs each command with it's result
@@ -43,45 +58,137 @@ const commandSet = {
     },
     create : (args, message) => {   
         // TODO: NEED TO ADD A CHECK FOR WHETHER THE CHARACTER IS A PLAYER IN AN EXISTING GAME
-        if (active_games.hasOwnProperty(message.author)) {
-            message.reply("<@" + message.author.id + ">'s Already has a game active. Please +remove this game before making a new one!");
-        } else {
-            if( message.mentions.users.size + 1 < config.MIN_PARTICIPANTS || message.mentions.users.size + 1 > config.MAX_PARTICIPANTS ){
-                message.reply("Sorry! This game only supports " + config.MIN_PARTICIPANTS + "-" + config.MAX_PARTICIPANTS + " players : " + message.mentions.users.size);
-                return;
-            }
-            
-            let participants = [];
-            participants.push(message.author.id);
-            message.mentions.users.forEach(user => {
-                participants.push(user.id);
-            });
-            
-            let game = new Game(message.author, participants, message.channel);
-            let thread_promise = game.open_thread();
-
-            let players = "";
-            game.participants.forEach(playerID => {
-                players += " <@" + (playerID) + ">"; 
-            });
-            active_games[message.author] = game;
-            message.reply("Created Game with:" + players);
+        if (message.channel.type !== "GUILD_TEXT"){
+            message.reply("New games can only be created in a standard text channel");
+            return;
         }
+        else if (active_games_by_author.hasOwnProperty(message.author)) {
+            message.reply("<@" + message.author.id + ">'s Already has a game active. Please +destroy this game before creating a new one!");
+            return;
+        }
+        else if( message.mentions.users.size + 1 < config.MIN_PARTICIPANTS || message.mentions.users.size + 1 > config.MAX_PARTICIPANTS ){
+            message.reply("Sorry! This game only supports " + config.MIN_PARTICIPANTS + "-" + config.MAX_PARTICIPANTS + " players : " + message.mentions.users.size);
+            return;
+        }
+        
+        let participants = [];
+        participants.push(message.author);
+        message.mentions.users.forEach(user => {
+            participants.push(user);
+        });
+        
+        let game = new Game(message.author, participants, message.channel);
+        let thread_promise = game.open_thread();
+        let players = "";
+        game.participants.forEach(player => {
+            players += " <@" + (player.id) + ">"; 
+        });
+        thread_promise.then(() => active_games_by_author[message.author] = game)
+            .then(() => active_games_by_channel[game.thread.id] = game);
+        message.reply("Created Game with:" + players);
     },
-    remove : (args, message) => {
-        if (active_games.hasOwnProperty(message.author)) {
-            delete active_games[message.author];
-            message.reply("<@" + message.author.id + ">'s game has been removed!");
-        } else {
+    destroy : (args, message) => {
+        if (!active_games_by_author.hasOwnProperty(message.author)) {
             message.reply("<@" + message.author.id + "> had no active game!");
+            return;
+        }
+        let game = active_games_by_author[message.author];
+        game.close_thread().then(()=>{
+            delete active_games_by_author[message.author];
+            delete active_games_by_channel[game.channel.id];
+        });
+        message.reply("<@" + message.author.id + ">'s game has been removed!");
+    },
+    start : (args, message) => {
+        if (!active_games_by_channel.hasOwnProperty(message.channel.id)) {
+            message.reply("Games can only be started from their own thread. Create a new game + thread using +create @user1 @user2")
+
+        } else if (active_games_by_author.hasOwnProperty(message.author) && active_games_by_channel[message.channel.id].author !== message.author) {
+            SendThreadMessage("Only the owner <@" + active_games_by_channel[message.channel.id].author + "> can start the game!", active_games_by_channel[message.channel.id].thread)
+
+        } else {
+            // ASSIGN PLAYER ROLES
+            let game = active_games_by_channel[message.channel.id];
+            
+            SendThreadMessage("" + game.participants.length + " ", game.thread);
+            let num_players = game.participants.length;
+            let game_table = tables.PLAYER_COUNTS[num_players.toString()];
+
+            let participants_indices = Array.from({length: num_players}, (_, i) => i);
+            let allies = Array.from({length: game_table.GOOD}, (_, i) => {
+                var randomIndex = Math.floor(Math.random()*participants_indices.length);
+                return participants_indices.splice(randomIndex, 1)[0];
+            });
+            let minions = participants_indices;
+            let merlin = allies[0];
+            let assassin = minions[0];
+
+            game.populate_characters(allies, minions, merlin, assassin);
+
+            SendDirectMessage("Started game: " + game.thread_name, game.author)
+            .then(()=> {
+                // SEND ROLE MESSAGES
+                let names = "Your fellow Minions of Mordred are: "
+                minions.forEach(minion => {
+                    names += game.participants[minion].username + " "
+                })
+                
+                message = ""
+                minions.forEach(minion => {
+                    if (game.participants[minion].id != game.participants[assassin].id){
+                        message += "Hello Minion!\nYour task is to ensure the heroes do not beat three quests. Be careful and use your cunning to avoid detection!\n\n"
+                    } else {
+                        message += "Hello Assassin!\nYour main task is to ensure the heroes cannot beat three quests. Keep a sharp eye though. \nIf they do succeed, you will have one final shot to assassinate Merlin and steal the victory!\n\n"
+                    }
+                    message += names;
+                    SendDirectMessage(message, game.participants[assassin]);
+                })
+
+                message = ""
+                
+                allies.forEach(ally => {
+                    if (game.participants[ally].id != game.participants[merlin].id){
+                        message += "Hello Ally!\n";
+                    }
+                    else {
+                        message += "Hello Merlin!\n";
+                    }
+                    message += "You must use your wit and will to complete three quests without revealing Merlin's Identity!";
+                    SendDirectMessage(message, game.participants[ally]);
+                })
+
+                SendThreadMessage("Please check your DMs to see your role!", game.thread);
+            }).then(() => {
+                // Print Game
+                // This will print out the current counters + the current phase.
+                // Depending on phase, it will either print out:
+                    // Leader needs help deciding on a team!
+                    // Waiting for all votes!
+            });
+            
+            // Need to initiate game
+            message.reply("<@" + message.author + "> Started the game!.");
         }
     },
     send : (args, message) => {     // TESTER FUNCTION
-        if (active_games.hasOwnProperty(message.author)) {
-            message.reply("<@" + message.author.id + "> Sent a message to the thread!");
-            active_games[message.author].send_thread_message("Halleilujah");
+        if (active_games_by_author.hasOwnProperty(message.author)) {
+            message.reply("<@" + message.author.id + "> Sent message:" + args + "!");
         }
     }
+}
+
+function SendThreadMessage(text, thread)
+{
+    return Promise.resolve(thread.send(text))
+}
+
+function SendDirectMessage(text, user)
+{
+    if (user.bot)
+    {
+        return Promise.resolve(() => console.log(text))
+    }
+    return Promise.resolve(user.send(text))
 }
 
 const prefix = "+"
