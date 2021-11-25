@@ -37,18 +37,55 @@ function Game(author, participants, channel) {
         })
         this.thread = thread;
     }));
-    this.populate_characters = (good, bad, merlin, assassin) => {
-        this.allies = good
-        this.minions = bad
-        this.merlin = merlin
-        this.assassin = assassin
+    this.populate_characters = (table, good, bad, merlin, assassin) => {
+        this.table = table;
+        this.allies = good;
+        this.minions = bad;
+        this.merlin = merlin;
+        this.assassin = assassin;
     }
     this.close_thread = () => Promise.resolve(this.thread.delete( "Clearing Out Finished Thread" ) );
-    this.print_state = () => {
-        // This should just print out:
-        // Current score (Successes vs Fails, maybe like a sword?)
-        // Current state
+    this.init_game = () => {
+        this.ally_wins = 0;
+        this.minion_wins = 0;
+        this.team_build_attempts = 0;
+        this.current_quest = 0;
     }
+    this.get_state = () => {
+        message = "Currently on quest: " + (this.current_quest) + "\n";
+        message += this.current_message + "\n";
+        message += "Allies <";
+        message += config.ALLY_EMOTE.repeat(this.ally_wins);
+        message += "|";
+        message += config.MINION_EMOTE.repeat(this.minion_wins);
+        message += "> Minions";
+
+        return message;
+    }
+    this.print_state = () => {
+        message = this.get_state();
+        SendThreadMessage(message, this.thread);
+    }
+}
+
+function SetupProposalState (game) {
+    game.state = config.TEAM_PROPOSAL;
+    game.voters = game.participants;
+    game.votes_remaining = game.voters.length;
+    game.team = [];
+    game.passes = 0;
+    game.attempts = 0;
+    game.leader = Math.floor(Math.random()*game.participants.length);
+    game.current_message = config.TEAM_PROPOSAL + "\n <@" + game.participants[game.leader].id + "> must use +propose " + "@team_member".repeat(game.table[game.current_quest]);
+}
+function SetupQuestState (game) {
+    game.state = config.QUESTING;
+    game.voters = game.team;
+    game.votes_remaining = game.voters.length;
+    game.passes = 0;
+    game.attempts = 0;
+    game.leader = Math.floor(Math.random()*game.participants.length);
+    game.current_message = config.TEAM_QUESTING + "\n " + game.team;
 }
 
 // Pairs each command with it's result
@@ -74,7 +111,9 @@ const commandSet = {
         let participants = [];
         participants.push(message.author);
         message.mentions.users.forEach(user => {
-            participants.push(user);
+            if (!participants.includes(user)){
+                participants.push(user);
+            }
         });
         
         let game = new Game(message.author, participants, message.channel);
@@ -103,7 +142,7 @@ const commandSet = {
         if (!active_games_by_channel.hasOwnProperty(message.channel.id)) {
             message.reply("Games can only be started from their own thread. Create a new game + thread using +create @user1 @user2")
 
-        } else if (active_games_by_author.hasOwnProperty(message.author) && active_games_by_channel[message.channel.id].author !== message.author) {
+        } else if (active_games_by_channel[message.channel.id].author !== message.author) {
             SendThreadMessage("Only the owner <@" + active_games_by_channel[message.channel.id].author + "> can start the game!", active_games_by_channel[message.channel.id].thread)
 
         } else {
@@ -112,62 +151,197 @@ const commandSet = {
             
             SendThreadMessage("" + game.participants.length + " ", game.thread);
             let num_players = game.participants.length;
-            let game_table = tables.PLAYER_COUNTS[num_players.toString()];
+            let team_table = tables.NET_TEAM_SIZE[num_players.toString()];
+            let quest_table = tables.QUEST_TEAM_SIZE[num_players.toString()];
 
             let participants_indices = Array.from({length: num_players}, (_, i) => i);
-            let allies = Array.from({length: game_table.GOOD}, (_, i) => {
+
+            console.log("Picking n many items: " + team_table.GOOD);
+            let allies = [];
+            for (let i = 0; i < team_table.GOOD ; i++){
                 var randomIndex = Math.floor(Math.random()*participants_indices.length);
-                return participants_indices.splice(randomIndex, 1)[0];
-            });
+                allies.push(participants_indices.splice(randomIndex, 1)[0]);
+            }
+
             let minions = participants_indices;
             let merlin = allies[0];
             let assassin = minions[0];
 
-            game.populate_characters(allies, minions, merlin, assassin);
+            game.populate_characters(quest_table, allies, minions, merlin, assassin);
 
-            SendDirectMessage("Started game: " + game.thread_name, game.author)
+            SendThreadMessage("Started game: " + game.thread_name + " Allies: " + allies.length + " Minions: " + minions.length, game.thread)
             .then(()=> {
                 // SEND ROLE MESSAGES
-                let names = "Your fellow Minions of Mordred are: "
+                let minion_names = ""
                 minions.forEach(minion => {
-                    names += game.participants[minion].username + " "
+                    minion_names += game.participants[minion].username + " "
                 })
                 
-                message = ""
                 minions.forEach(minion => {
+                    message = ""
                     if (game.participants[minion].id != game.participants[assassin].id){
-                        message += "Hello Minion!\nYour task is to ensure the heroes do not beat three quests. Be careful and use your cunning to avoid detection!\n\n"
+                        message += "Hello Minion<@" + game.participants[minion].id + ">!\nYour task is to ensure the heroes do not beat three quests. Be careful and use your cunning to avoid detection!\n\n"
                     } else {
-                        message += "Hello Assassin!\nYour main task is to ensure the heroes cannot beat three quests. Keep a sharp eye though. \nIf they do succeed, you will have one final shot to assassinate Merlin and steal the victory!\n\n"
+                        message += "Hello Assassin <@" + game.participants[minion].id + ">!\nYour main task is to ensure the heroes cannot beat three quests. Keep a sharp eye though. \nIf they do succeed, you will have one final shot to assassinate Merlin and steal the victory!\n\n"
                     }
-                    message += names;
-                    SendDirectMessage(message, game.participants[assassin]);
+                    message += "Your fellow Minions of Mordred are: " + minion_names;
+                    SendDirectMessage(message, game.participants[minion]);
+                    //SendThreadMessage(message, game.thread);
                 })
 
-                message = ""
                 
                 allies.forEach(ally => {
+                    message = ""
                     if (game.participants[ally].id != game.participants[merlin].id){
-                        message += "Hello Ally!\n";
+                        message += "Hello Ally <@" + game.participants[ally].id + ">!\n";
+                        message += "You must use your wit and will to complete three quests without revealing Merlin's Identity!\n";
                     }
                     else {
-                        message += "Hello Merlin!\n";
+                        message += "Hello Merlin <@" + game.participants[ally].id + ">!\n";
+                        message += "You must use your wit and will to complete three quests without revealing your Identity!\n";
+                        message += "Be cautious, enemies are abound. Look out for the Minions of Mordred: " + minion_names;
                     }
-                    message += "You must use your wit and will to complete three quests without revealing Merlin's Identity!";
                     SendDirectMessage(message, game.participants[ally]);
+                    //SendThreadMessage(message, game.thread);
                 })
 
                 SendThreadMessage("Please check your DMs to see your role!", game.thread);
-            }).then(() => {
-                // Print Game
-                // This will print out the current counters + the current phase.
-                // Depending on phase, it will either print out:
-                    // Leader needs help deciding on a team!
-                    // Waiting for all votes!
+            }).then(() => { 
+                game.init_game();
+                SetupProposalState(game);
+                game.print_state();
             });
             
             // Need to initiate game
             message.reply("<@" + message.author + "> Started the game!.");
+        }
+    },
+    propose : (args, message) => {     // TESTER FUNCTION
+        if (!active_games_by_channel.hasOwnProperty(message.channel.id)) {
+            message.reply("Proposals must be made within a Game's thread")
+        } else if (active_games_by_channel[message.channel.id].participants.includes(message.author)){
+            let game = active_games_by_channel[message.channel.id];
+            if (game.state !== config.TEAM_PROPOSAL){
+                message.reply("This game is currently not in the proposal phase \n" + game.get_state());
+            }
+            else if (message.author !== game.participants[game.leader]){
+                SendThreadMessage("Only the current leader <@" + game.participants[game.leader].id + "> can make a proposal!", game.thread);
+            } 
+            else {
+                let proposed = []
+                let proposed_string = ""
+                message.mentions.users.forEach(user => {
+                    if (game.participants.includes(user) && !proposed.includes(user)){
+                        proposed.push(user);
+                        proposed_string += "" + user.username + ", ";
+                    }
+                });
+                if (proposed.length !== game.table[game.current_quest]){
+                    message.reply("The team for this quest must be made up of exactly " + game.table[game.current_quest] + "unique participants");
+                }
+                else {
+                    game.team = proposed;
+                    message.reply("<@" + message.author.id + "> Proposed team is: " + proposed_string + "\nPlease check your dms to vote!");
+                    game.participants.forEach(player => {
+                        SendDirectMessage("Proposed team is: " + args + "\n use +vote pass or +vote fail to approve or deny the combination.\nA MAJORITY VOTE IS REQUIRED, IF NOT SECURED, TRY AGAIN.\n IF FIVE COMBINATIONS ARE REJECTED, THE VILLAINS WIN!", player);
+                    });
+                }
+            }
+        } 
+    },
+    vote : (args, message) => {     // TESTER FUNCTION
+        if (!message.guild == null && !message.author.bot) {
+            message.reply("Votes must be cast in a DM to the bot")
+            return;
+        }
+        console.log();
+        let game = false;
+        Object.keys(active_games_by_author).forEach(key => {
+            if (active_games_by_author[key].participants.includes(message.author)) {
+                game = active_games_by_author[key];
+            }
+        });
+        if (game === false){
+            message.reply("You must join and start a game to participate in a vote");
+            return;
+        } else if (!game.voters.includes(message.author)){
+            message.reply("Either you have already submitted a vote, or you are not required to vote!");
+            return;
+        } else {
+            let i = game.participants.indexOf(message.author);
+            let vote = args.shift().toLowerCase();
+            if (vote === "pass") {
+                game.passes += 1;
+                game.votes_remaining -= 1;
+                message.reply("Vote logged!");
+            }
+            else if (vote === "fail") {
+                if (game.minions.includes(i)){
+                    game.passes -= 1;
+                    game.votes_remaining -= 1;
+                    message.reply("Vote logged!");
+                }
+                message.reply("You're a hero, not a minion! Please use +vote pass");
+                return;
+            }
+            else {
+                message.reply("Please vote with either +vote pass or +vote fail");
+                return;
+            }
+            
+            SendThreadMessage("<@" + message.author + "> Voted! " + game.votes_remaining + " Votes Remaining!", game.thread);
+            if (game.votes_remaining === 0) {
+                if (game.state === config.TEAM_PROPOSAL) {
+                    if (game.passes > game.participants.length / 2) {
+                        SetupQuestState(game);
+                        game.print_state();
+                        SendThreadMessage("it is time! Use +vote pass or +vote fail to sway the outcome of the quest!", game.thread);
+                    } 
+                    else {
+                        game.attempts += 1;
+                        if (game.attempts >= 5) {
+                            let text = "GAME OVER!!!\nThe villanous minions of Mordred successfully foiled your quest! The infighting they caused threw the party into turmoil.\n\nCongratulations:";
+                            game.minions.forEach(minion => {
+                                text += " <@" + game.participants[minion].id + ">,";
+                            });
+                            text += "\n\n Nice try: "
+                            game.allies.forEach(ally => {
+                                text += " <@" + game.participants[ally].id + ">,";
+                            });
+
+                            SendThreadMessage(text, game.thread)
+                        } else {
+                            SetupProposalState(game);
+                            SendThreadMessage("How unfortunate, you did not get enough votes to move on.\nTry again, perhaps this new leader will help you more: <@" +game.participants[game.leader].id +">", game.thread);
+                        }
+                    }
+                } else if (game.state === config.QUESTING){
+                    let success = game.passes >= game.table[game.current_quest.toString()];
+                    if (success) {
+                        game.ally_wins += 1;
+                    } else {
+                        game.minion_wins += 1;
+                    }
+
+                    game.current_quest += 1;
+                    if (game.ally_wins >= 3){
+                        game.print_state()
+                        let text = "Egads! The heroes have made it back with the Holy Grail! \n@Assassin, you have one final shot. If you can correctly +assassinate Merlin you will take the victory!";
+                        SendThreadMessage(text, game.thread);
+                        SendDirectMessage("use +assassinate @target to try and defeat Merlin once and for all!", game.participants[game.assassin]);
+                    } else if (game.minion_wins >= 3){
+                        let text = "GAME OVER!!!\nThe villanous minions of Mordred successfully foiled your quest! The infighting they caused threw the party into turmoil.\n\nCongratulations:";
+                        game.minions.forEach(minion => {
+                            text += " <@" + game.participants[minion].id + ">,";
+                        });
+                        text += "\n\n Nice try: "
+                        game.allies.forEach(ally => {
+                            text += " <@" + game.participants[ally].id + ">,";
+                        });
+                        SendThreadMessage(text, game.thread)
+                    }
+                }
+            }
         }
     },
     send : (args, message) => {     // TESTER FUNCTION
@@ -204,6 +378,7 @@ client.on("messageCreate", async (message) => {
     if (commandSet.hasOwnProperty(command))
     {
         commandFunc = commandSet[command];
+        console.log(command + " | " + args);
         commandFunc(args, message);
     }
     else {

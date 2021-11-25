@@ -1,5 +1,4 @@
 // BEFORE USE YOU NEED TO RENAME THIS TO config.json
-
 {
     "BOT_TOKEN": "",    // RETRIEVE THIS FROM DISCORD DEV PORTAL
     "SERVER_ID": "",    // RETRIEVE THIS FROM THE SERVER
@@ -8,5 +7,7 @@
     "MAX_PARTICIPANTS": 3,
     "THREAD_NAME": "Avalon-Quest",
 
-    "START_MESSAGE": "Use +start to begin the game!"
+    "START_MESSAGE": "Use +start to begin the game!",
+    "TEAM_BUILDING": "Team Building Phase",
+    "QUESTING": "Questing Phase"
 }
