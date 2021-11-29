@@ -4,8 +4,17 @@ using UnityEngine.InputSystem;
 
 namespace Engine
 {
+    public interface IInputService : IService
+    {
+        public void PushMap(InputActionMap map);
+        public InputActionMap PopMap();
+        public void SetDefaultMap(InputActionMap map);
+        public InputActionMap GetPlayerMap();
+        public InputActionMap GetUIMap();
+    }
+    
     // Input Switcher used to switch between different input maps
-    public class InputRouter : MonoBehaviour, IInputRouter
+    public class InputService : MonoBehaviour, IInputService
     {
         PlayerInput _playerInput;
         Stack<InputActionMap> _fifoMapStack;
@@ -16,7 +25,7 @@ namespace Engine
             _playerInput = GetComponent<PlayerInput>();
             _defaultMap = _playerInput.currentActionMap;
             _fifoMapStack = new Stack<InputActionMap>();
-            ServiceFactory.AddService((IInputRouter)this);
+            ServiceFactory.AddService(this as IInputService);
         }
         
         // Swap Out Maps
