@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f1d6081444c4caeb0d43dfa3951feca, type: 3}
+  m_Script: {fileID: 11500000, guid: 049347ab74e04b5b99b2ed38cb08444c, type: 3}
   m_Name: ProjectileParams
   m_EditorClassIdentifier: 
   speed: 6
-  radius: 0.5
   image: {fileID: 21300000, guid: be3dab3f300e3084c9687ed9bf1331c5, type: 3}
-  lifetime: 5
+  lifetime: 4

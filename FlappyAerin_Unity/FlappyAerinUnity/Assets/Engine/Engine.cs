@@ -10,11 +10,12 @@ namespace Engine
         IInputService _inputService;
         InputActionMap _uiMap;
         InputActionMap _playerMap;
+        
+        // What is this meant to do basically?
 
         void Start()
         {
-            _inputService = ServiceFactory.GetService<IInputService>();
-            
+            _inputService = ServiceFactory.GetService<IInputService>();   
             _uiMap = _inputService.GetUIMap();
             _playerMap = _inputService.GetPlayerMap();
 

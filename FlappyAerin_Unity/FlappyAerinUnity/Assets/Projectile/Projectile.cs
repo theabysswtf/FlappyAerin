@@ -1,47 +1,53 @@
 using System.Collections;
+using Engine;
+using Tools;
 using UnityEngine;
 
 namespace Projectile
 {
+
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(SpriteRenderer))]
-    public class Projectile : MonoBehaviour, IProjectile
+    public class Projectile : MonoBehaviour, IReusable
     {
 
         /// <summary>
         /// ACTUAL BEHAVIOUR
         /// </summary>
-        ProjectileParams @params;
-        
-        Rigidbody2D _rb;
+        ProjectileParams _params;
+
         SpriteRenderer _sprite;
         Coroutine _timerRoutine;
 
-        public Vector2 Direction { get; set; }
-        float LifeStartTime { get; set; }
-        float EndTime => LifeStartTime + @params.lifetime;
-        
         public ReturnDelegate ReturnToBag { get; set; }
+        Vector2 Direction { get; set; }
+        float LifeStartTime { get; set; }
+        float EndTime => LifeStartTime + _params.lifetime;
+
 
         void Awake()
         {
-            _rb = GetComponent<Rigidbody2D>();
             _sprite = GetComponent<SpriteRenderer>();
         }
 
-        public void Init(ref ProjectileParams p, Vector2 position, Vector2 dir)
+        public void Init(ref ReusableParams p, Vector2 position, Vector2 dir)
         {
-            @params = p;
+            LoadParams(ref p);
             Direction = dir;
             transform.position = position;
-            _sprite.sprite = p.image;
             _timerRoutine = StartCoroutine(Countdown());
             
             // OnFire events would fire off here
         }
+        
+        public void LoadParams(ref ReusableParams p)
+        {
+            _params = (ProjectileParams) p;
+            _sprite.sprite = _params.image;
+        }
         void Update()
         {
-            transform.Translate(Direction * (@params.speed * Time.deltaTime));
+            transform.Translate(Direction * (_params.speed * Time.deltaTime));
             // OnTick events would fire off here. Maybe 1 per n ticks
         }
 
@@ -67,11 +73,4 @@ namespace Projectile
             Die();
         }
     }
-
-    public interface IProjectile
-    {
-        public void Init(ref ProjectileParams p, Vector2 position, Vector2 dir);
-        ReturnDelegate ReturnToBag { get; set; }
-    }
-    public delegate void ReturnDelegate(Projectile p);
 }

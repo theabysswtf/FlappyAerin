@@ -2,13 +2,25 @@ using Engine;
 using Projectile;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using ReusableParams = Tools.ReusableParams;
 
 namespace Player
 {
+    /// <summary>
+    /// INTERFACE
+    /// </summary>
+    public interface IPlayer : IService
+    {
+        InputActionMap ControlMap { get; }
+    }
+    
+    /// <summary>
+    /// CLASS DEFINITION
+    /// </summary>
     public class Player : MonoBehaviour, IPlayer
     {
         [SerializeField] PlayerParams @params;
-        [SerializeField] ProjectileParams projectileParams;
+        [SerializeField] ReusableParams projectileParams;
         public InputActionMap ControlMap { get; private set; }
 
         ICameraService _cam;
@@ -29,10 +41,10 @@ namespace Player
         {
             _proj = ServiceFactory.GetService<IProjectileService>();
             _cam = ServiceFactory.GetService<ICameraService>();
-            var r = ServiceFactory.GetService<IInputService>();
+            IInputService r = ServiceFactory.GetService<IInputService>();
             ControlMap = r.GetPlayerMap();
 
-            var a = ControlMap.FindAction("Jump");
+            InputAction a = ControlMap.FindAction("Jump");
             a.started += OnJump;    // Start Jump
             a.canceled += OnJump;   // End Jump
         
