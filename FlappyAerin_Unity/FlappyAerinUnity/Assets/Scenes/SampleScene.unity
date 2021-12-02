@@ -123,6 +123,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &51296692
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 51296693}
+  m_Layer: 0
+  m_Name: AudioBoxRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &51296693
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51296692}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1178036678}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &151899319
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,6 +400,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   params: {fileID: 11400000, guid: 957e98b5cfc3da14a9c66866d08d2dcd, type: 2}
   projectileParams: {fileID: 11400000, guid: e461c0490d03e1d41ab6b00b1397abbd, type: 2}
+  audioParams: {fileID: 11400000, guid: de5f2338faf977943b002f742795a541, type: 2}
 --- !u!50 &576489950
 Rigidbody2D:
   serializedVersion: 4
@@ -403,6 +435,7 @@ GameObject:
   - component: {fileID: 1178036677}
   - component: {fileID: 1178036679}
   - component: {fileID: 1178036680}
+  - component: {fileID: 1178036681}
   m_Layer: 0
   m_Name: Engine
   m_TagString: Untagged
@@ -529,6 +562,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2068048186}
+  - {fileID: 51296693}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -558,6 +592,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneRoot: {fileID: 2068048186}
   projectileBase: {fileID: 1931342039618655939, guid: 0409b08eb7bea3e4eb71732eff4d3780, type: 3}
+--- !u!114 &1178036681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178036675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f04e998334ac72543a937f2d75e2a0bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneRoot: {fileID: 51296693}
+  prefab: {fileID: 393439646705589932, guid: e29edc0f1a2349b4ea2ac60a3df6d6c7, type: 3}
 --- !u!1 &1777680973
 GameObject:
   m_ObjectHideFlags: 0

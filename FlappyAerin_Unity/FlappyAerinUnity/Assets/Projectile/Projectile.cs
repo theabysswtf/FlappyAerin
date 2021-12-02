@@ -30,7 +30,7 @@ namespace Projectile
             _sprite = GetComponent<SpriteRenderer>();
         }
 
-        public void Init(ref ReusableParams p, Vector2 position, Vector2 dir)
+        public void Init(ref ProjectileParams p, Vector2 position, Vector2 dir)
         {
             LoadParams(ref p);
             Direction = dir;
@@ -39,10 +39,10 @@ namespace Projectile
             
             // OnFire events would fire off here
         }
-        
-        public void LoadParams(ref ReusableParams p)
+
+        void LoadParams(ref ProjectileParams p)
         {
-            _params = (ProjectileParams) p;
+            _params = p;
             _sprite.sprite = _params.image;
         }
         void Update()

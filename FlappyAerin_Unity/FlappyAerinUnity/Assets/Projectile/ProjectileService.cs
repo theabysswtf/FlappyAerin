@@ -8,9 +8,9 @@ namespace Projectile
     /// <summary>
     /// Interface
     /// </summary>
-    public interface IProjectileService : IReusableService<Projectile>
+    public interface IProjectileService : IService
     {
-        public void SpawnProjectile(ref ReusableParams p, Vector2 position, Vector2 dir);
+        public void CreateProjectile(ref ProjectileParams p, Vector2 position, Vector2 dir, out Projectile projectile);
     }
 
     /// <summary>
@@ -34,13 +34,11 @@ namespace Projectile
             _bag = new ReusableBag<Projectile>(ref projectileBase, sceneRoot);
         }
 
-        public void SpawnProjectile(ref ReusableParams p, Vector2 position, Vector2 dir)
+        public void CreateProjectile(ref ProjectileParams p, Vector2 position, Vector2 dir, out Projectile projectile)
         {
             Projectile newShot = _bag.Get();
             newShot.Init(ref p, position, dir);
+            projectile = newShot;
         }
-        
-        // Use SpawnProjectileInstead!
-        public void Instance(ref ReusableParams p, out Projectile ret) => throw new System.NotImplementedException();
     }
 }

@@ -1,8 +1,8 @@
+using Audio;
 using Engine;
 using Projectile;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using ReusableParams = Tools.ReusableParams;
 
 namespace Player
 {
@@ -16,15 +16,17 @@ namespace Player
     
     /// <summary>
     /// CLASS DEFINITION
-    /// </summary>
+    /// </summary>0xA46638dEcb698520a569ADC5e882b17A83b54648
     public class Player : MonoBehaviour, IPlayer
     {
         [SerializeField] PlayerParams @params;
-        [SerializeField] ReusableParams projectileParams;
+        [SerializeField] ProjectileParams projectileParams;
+        [SerializeField] AudioBoxParams audioParams;
         public InputActionMap ControlMap { get; private set; }
 
         ICameraService _cam;
         IProjectileService _proj;
+        IAudioBoxService _audio;
         
         Vector2 _mousePosition;
         Vector2 _velocity;
@@ -41,6 +43,7 @@ namespace Player
         {
             _proj = ServiceFactory.GetService<IProjectileService>();
             _cam = ServiceFactory.GetService<ICameraService>();
+            _audio = ServiceFactory.GetService<IAudioBoxService>();
             IInputService r = ServiceFactory.GetService<IInputService>();
             ControlMap = r.GetPlayerMap();
 
@@ -76,6 +79,9 @@ namespace Player
                 _jumping = true;
                 _timeOfJumpStart = Time.time;
                 _gravity = @params.glideGravity;
+                
+                _audio.PlaySound(ref audioParams, out AudioBox _);
+                
             }
             else if (obj.canceled)
             {
@@ -85,10 +91,11 @@ namespace Player
         }
         void OnFire(InputAction.CallbackContext obj)
         {
-            _proj.SpawnProjectile(
-                            ref projectileParams, 
-                            transform.position, 
-                            (@params.shotDirection).normalized);
+            _proj.CreateProjectile(
+                        ref projectileParams,
+                        transform.position, 
+                        (@params.shotDirection).normalized,
+                        out Projectile.Projectile _);
         }
         void OnPoint(InputAction.CallbackContext obj)
         {

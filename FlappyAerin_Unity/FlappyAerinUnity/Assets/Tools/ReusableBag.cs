@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using Tools;
+﻿using System.Collections.Concurrent;
+using JetBrains.Annotations;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Engine
+namespace Tools
 {
     
     /// <summary>
@@ -13,13 +12,7 @@ namespace Engine
     public delegate void ReturnDelegate(IReusable reusable);
     public interface IReusable
     {
-        public void LoadParams(ref ReusableParams p);
-        ReturnDelegate ReturnToBag { get; set; }
-    }
-
-    public interface IReusableService<T> : IService
-    {
-        public void Instance(ref ReusableParams p, out T ret);
+        ReturnDelegate ReturnToBag { [UsedImplicitly] get; set; }
     }
 
     /// <summary>
@@ -27,16 +20,9 @@ namespace Engine
     /// </summary>
     public interface IReusableBag<out T> where T : IReusable
     {
-        public void Return(IReusable t);
+        [UsedImplicitly] public void Return(IReusable t);
         public T Get();
     }
-    
-    /* ProjectileService : Monobehaviour, IReusableService<Projectile>
-     * SoundBoxService : Monobehaviour, IReusableService<SoundBox>
-     *  
-     *
-     * 
-     */
     
     /// <summary>
     /// Data Structure
@@ -62,17 +48,17 @@ namespace Engine
             GameObject obj = Object.Instantiate(_prefab, _sceneAnchor, true) as GameObject;
             // ReSharper disable once PossibleNullReferenceException
             IReusable pb = obj.GetComponent<T>();
-            pb.ReturnToBag = ((IReusableBag<T>) this).Return;
+            pb.ReturnToBag = Return;
 
             return (T) pb;
         }
 
-        T IReusableBag<T>.Get()
+        public T Get()
         {
             return (Bag.TryTake(out var t)) ? t : Generate();
         }
 
-        void IReusableBag<T>.Return(IReusable t)
+        public void Return(IReusable t)
         {
             Bag.Add(t as T);
         }
