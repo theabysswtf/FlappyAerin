@@ -1,5 +1,4 @@
 using System.Collections;
-using Engine;
 using Tools;
 using UnityEngine;
 
@@ -28,6 +27,7 @@ namespace Projectile
         void Awake()
         {
             _sprite = GetComponent<SpriteRenderer>();
+            // Instantiate SpriteAnimation as component. Should be something that is called from your update
         }
 
         public void Init(ref ProjectileParams p, Vector2 position, Vector2 dir)
