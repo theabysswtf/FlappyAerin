@@ -1,0 +1,27 @@
+
+
+{
+    "BOT_TOKEN": "",
+    "SERVER_ID": "",
+    "PREFIX": "+",
+    "MIN_PARTICIPANTS": 2,
+    "MAX_PARTICIPANTS": 10,
+    "THREAD_NAME": "Avalon-Quest",
+
+    "START_MESSAGE": "Use +start to begin the game!",
+    "TEAM_QUESTING": "Questing Phase : Waiting for all Votes",
+    "TEAM_PROPOSAL": "Team Building Phase : Waiting for proposal",
+    "QUESTING": "Questing Phase : Waiting for all votes",
+    "ALLY_EMOTE": ":shield:",
+    "MINION_EMOTE": ":crossed_swords:",
+    "PASS_EMOTE": ":thumbsup:",
+    "FAIL_EMOTE": ":thumbsdown:",
+    "MINION_ROLE_TEXT": "You're a dreaded Minion of Mordred!",
+    "ASSASSIN_ROLE_TEXT": "You are the fearsome Assassin!",
+    "ALLY_ROLE_TEXT": "You are one of the staunchest allies of Merlin!",
+    "PASS_TOKEN": "pass",
+    "SUCCEED_TOKEN": "succeed",
+    "FAIL_TOKEN": "fail",
+    "MAX_PROPOSAL_ATTEMPTS": 5,
+    "REQUIRED_WINS": 5
+}
