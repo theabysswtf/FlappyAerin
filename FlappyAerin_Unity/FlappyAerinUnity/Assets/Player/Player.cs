@@ -20,8 +20,9 @@ namespace Player
     public class Player : MonoBehaviour, IPlayer
     {
         [SerializeField] PlayerParams @params;
-        [SerializeField] ProjectileParams projectileParams;
         [SerializeField] AudioBoxParams audioParams;
+        [SerializeField] ProjectileParams projectileParams;
+        [SerializeField] Transform projectileOrigin;
         public InputActionMap ControlMap { get; private set; }
 
         ICameraService _cam;
@@ -37,6 +38,7 @@ namespace Player
         void Awake()
         {
             ServiceFactory.AddService(this);
+            if (projectileOrigin == null) projectileOrigin = transform;
         }
 
         void Start()
@@ -44,7 +46,7 @@ namespace Player
             _proj = ServiceFactory.GetService<IProjectileService>();
             _cam = ServiceFactory.GetService<ICameraService>();
             _audio = ServiceFactory.GetService<IAudioBoxService>();
-            IInputService r = ServiceFactory.GetService<IInputService>();
+            var r = ServiceFactory.GetService<IInputService>();
             ControlMap = r.GetPlayerMap();
 
             InputAction a = ControlMap.FindAction("Jump");
@@ -74,6 +76,7 @@ namespace Player
 
         void OnJump(InputAction.CallbackContext obj)
         {
+            // should have slight cooldown on jump, + use jump buffering
             if (obj.started)
             {
                 _jumping = true;
@@ -93,9 +96,9 @@ namespace Player
         {
             _proj.CreateProjectile(
                         ref projectileParams,
-                        transform.position, 
+                        projectileOrigin.position, 
                         (@params.shotDirection).normalized,
-                        out Projectile.Projectile _);
+                        out _);
         }
         void OnPoint(InputAction.CallbackContext obj)
         {

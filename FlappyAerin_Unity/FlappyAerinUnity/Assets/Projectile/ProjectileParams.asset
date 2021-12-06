@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 049347ab74e04b5b99b2ed38cb08444c, type: 3}
   m_Name: ProjectileParams
   m_EditorClassIdentifier: 
+  spriteAnim: {fileID: 11400000, guid: 1fe8d627baa9fc5458b594ff4ec7035c, type: 2}
   speed: 6
-  image: {fileID: 21300000, guid: e70f5b9d3bab7a745b18cbbd2ad0feda, type: 3}
   lifetime: 4

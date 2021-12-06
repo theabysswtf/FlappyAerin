@@ -11,7 +11,8 @@
                     "id": "28fd4539-07b2-4658-9340-76e99ef69fe3",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Fire",
@@ -19,7 +20,8 @@
                     "id": "c3fa4ee3-e2bd-4191-9516-2602e16df9b3",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Pause",
@@ -27,7 +29,8 @@
                     "id": "12467c2b-e9b2-4fa7-9139-88f13663902a",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press"
+                    "interactions": "Press",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Escape",
@@ -35,7 +38,8 @@
                     "id": "6b8a30e0-a0f8-4d80-8ff4-b05daafb1028",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press"
+                    "interactions": "Press",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Point",
@@ -43,7 +47,17 @@
                     "id": "0c441a5f-1857-49d2-9a2e-52aee71574ac",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Test",
+                    "type": "Button",
+                    "id": "133d0e11-a3be-445b-b890-eff475114133",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -101,6 +115,17 @@
                     "action": "Point",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c2c31c05-3598-4204-a1ed-77f19121f4c1",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Test",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -114,7 +139,8 @@
                     "id": "2703d394-0dbc-455d-add6-f572f60ba6ca",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press"
+                    "interactions": "Press",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Escape",
@@ -122,7 +148,8 @@
                     "id": "476324cc-a299-4514-9680-a6c9337f9f80",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press"
+                    "interactions": "Press",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [

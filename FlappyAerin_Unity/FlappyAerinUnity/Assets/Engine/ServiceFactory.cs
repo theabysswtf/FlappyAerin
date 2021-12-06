@@ -1,11 +1,10 @@
 ﻿using System.Collections;
-using Projectile;
 
 namespace Engine
 {
     public static class ServiceFactory
     {
-        static readonly Hashtable Services = new Hashtable();
+        static readonly Hashtable Services = new();
         public static void AddService<T>(T t) where T:IService
         {
             Services.Add(typeof(T), t);

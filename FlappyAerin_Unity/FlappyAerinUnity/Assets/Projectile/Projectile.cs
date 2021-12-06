@@ -1,6 +1,7 @@
 using System.Collections;
 using Tools;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Projectile
 {
@@ -15,7 +16,7 @@ namespace Projectile
         /// </summary>
         ProjectileParams _params;
 
-        SpriteRenderer _sprite;
+        SpriteAnimator.SpriteAnimator _anim;
         Coroutine _timerRoutine;
 
         public ReturnDelegate ReturnToBag { get; set; }
@@ -23,54 +24,75 @@ namespace Projectile
         float LifeStartTime { get; set; }
         float EndTime => LifeStartTime + _params.lifetime;
 
+        public UnityEvent<string> tempEvent;
+        public UnityEvent<string> onHit;    // This should take in a list of hittable objects + a ProjectileParams object
 
+        
         void Awake()
         {
-            _sprite = GetComponent<SpriteRenderer>();
-            // Instantiate SpriteAnimation as component. Should be something that is called from your update
+            _anim = new SpriteAnimator.SpriteAnimator(GetComponent<SpriteRenderer>());
         }
-
+        
+        /// <summary>
+        /// Moves to desired position, sets direction + all params
+        /// </summary>
         public void Init(ref ProjectileParams p, Vector2 position, Vector2 dir)
         {
-            LoadParams(ref p);
+            _params = p;
+            _anim.SetAnim(_params.spriteAnim);
             Direction = dir;
             transform.position = position;
             _timerRoutine = StartCoroutine(Countdown());
+            _anim.Play(0);
             
-            // OnFire events would fire off here
+            tempEvent.Invoke("Hello");
         }
-
-        void LoadParams(ref ProjectileParams p)
-        {
-            _params = p;
-            _sprite.sprite = _params.image;
-        }
-        void Update()
-        {
-            transform.Translate(Direction * (_params.speed * Time.deltaTime));
-            // OnTick events would fire off here. Maybe 1 per n ticks
-        }
-
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            // OnCollision events would fire off here. Maybe 1 per n ticks
-            Die();
-        }
-
-        void Die()
-        {
-            // OnDie events fire off here
-            //Start the burst coroutine
-            StopCoroutine(_timerRoutine);
-            Direction = Vector2.zero;
-            ReturnToBag(this);
-        }
-
+        
+        /// <summary>
+        /// Lifetime Enforcer.
+        /// </summary>
         IEnumerator Countdown()
         {
             LifeStartTime = Time.time;
             yield return new WaitUntil(() => Time.time > EndTime);
-            Die();
+            Return();
+        }
+        
+        void Update()
+        {
+            transform.Translate(Direction * (_params.speed * Time.deltaTime));
+            _anim.TryStep();
+        }
+        
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            // if other has a Hittable component, start the Return coroutine.
+            // Ideally this would literally just say "hey world, I'm dead", then whatever
+            // components are actively listening to this projectile would say "Okay~ let's"
+            // Handle this thing's demise. Play a sound, start a
+            // particle effect, etc. at it's last location"
+            // This means the generic onDie method for a projectile should take in a "ProjectileParams" object, 
+            // as well as a transform. That should be good.
+            // onHit should take in a set of objects to be collided with
+            // Maybe have a global statusTicker which says "okay, everything's status will update according to this timer.
+            // and will just pay attention to, and invoke methods as time goes on.
+
+            Return();
+        }
+        
+        // Return the projectile to it's bag.
+        void Return()
+        {
+            tempEvent.Invoke("World!");
+            StopCoroutine(_timerRoutine);
+            _anim.Stop();
+            Direction = Vector2.zero;
+            ReturnToBag(this);
+        }
+
+        public void PrintString(string s)
+        {
+            Debug.Log(s);
         }
     }
 }
