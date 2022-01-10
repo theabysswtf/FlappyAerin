@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 049347ab74e04b5b99b2ed38cb08444c, type: 3}
-  m_Name: ProjectileParams
+  m_Script: {fileID: 11500000, guid: a3311ea9b08f728448bd7273ecf23f2e, type: 3}
+  m_Name: 1
   m_EditorClassIdentifier: 
-  spriteAnim: {fileID: 11400000, guid: 1fe8d627baa9fc5458b594ff4ec7035c, type: 2}
-  speed: 6
-  lifetime: 4
+  sprite: {fileID: -303216829, guid: 956389118adf23746929b04266275dfd, type: 3}
+  endPosition: {x: 2, y: -0.625}

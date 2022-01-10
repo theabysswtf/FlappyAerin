@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 049347ab74e04b5b99b2ed38cb08444c, type: 3}
+  m_Name: Fireball
+  m_EditorClassIdentifier: 
+  fireSound: {fileID: 11400000, guid: 77c93509a7abb9b4fb6baab80049beed, type: 2}
+  impactSound: {fileID: 11400000, guid: 44bf880bdad422942a2de80a3bc376ef, type: 2}
+  wallImpactSound: {fileID: 11400000, guid: fb1c0a232b41b284b98266fb3b8578cf, type: 2}
+  spriteAnim: {fileID: 11400000, guid: 1fe8d627baa9fc5458b594ff4ec7035c, type: 2}
+  speed: 6
+  lifetime: 4

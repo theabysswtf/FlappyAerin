@@ -1,7 +1,8 @@
 using System.Collections;
+using Audio;
+using Engine;
 using Tools;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Projectile
 {
@@ -12,25 +13,34 @@ namespace Projectile
     {
 
         /// <summary>
-        /// ACTUAL BEHAVIOUR
+        /// Parameters
         /// </summary>
         ProjectileParams _params;
-
         SpriteAnimator.SpriteAnimator _anim;
         Coroutine _timerRoutine;
+        
+        /// <summary>
+        /// Services
+        /// </summary>
+        IAudioBoxService _audioService;
 
+        /// <summary>
+        /// Properties
+        /// </summary>
         public ReturnDelegate ReturnToBag { get; set; }
         Vector2 Direction { get; set; }
         float LifeStartTime { get; set; }
         float EndTime => LifeStartTime + _params.lifetime;
 
-        public UnityEvent<string> tempEvent;
-        public UnityEvent<string> onHit;    // This should take in a list of hittable objects + a ProjectileParams object
+        /// <summary>
+        /// Variables
+        /// </summary>
+        bool _projectileActive;
 
-        
         void Awake()
         {
             _anim = new SpriteAnimator.SpriteAnimator(GetComponent<SpriteRenderer>());
+            _audioService = ServiceFactory.GetService<IAudioBoxService>();
         }
         
         /// <summary>
@@ -39,13 +49,13 @@ namespace Projectile
         public void Init(ref ProjectileParams p, Vector2 position, Vector2 dir)
         {
             _params = p;
-            _anim.SetAnim(_params.spriteAnim);
+            _projectileActive = true;
             Direction = dir;
             transform.position = position;
+            _anim.SetAnim(_params.spriteAnim);
             _timerRoutine = StartCoroutine(Countdown());
             _anim.Play(0);
-            
-            tempEvent.Invoke("Hello");
+            _audioService.PlaySound(ref _params.fireSound, out _);
         }
         
         /// <summary>
@@ -66,33 +76,27 @@ namespace Projectile
         
         void OnTriggerEnter2D(Collider2D other)
         {
-            // if other has a Hittable component, start the Return coroutine.
-            // Ideally this would literally just say "hey world, I'm dead", then whatever
-            // components are actively listening to this projectile would say "Okay~ let's"
-            // Handle this thing's demise. Play a sound, start a
-            // particle effect, etc. at it's last location"
-            // This means the generic onDie method for a projectile should take in a "ProjectileParams" object, 
-            // as well as a transform. That should be good.
-            // onHit should take in a set of objects to be collided with
-            // Maybe have a global statusTicker which says "okay, everything's status will update according to this timer.
-            // and will just pay attention to, and invoke methods as time goes on.
-
-            Return();
+            // GetHittable component, call Hit(params).
+            if (_projectileActive) _audioService.PlaySound(ref _params.impactSound, out _);
+            _projectileActive = false;
+            Direction = Vector2.zero;
+        }
+        void OnCollisionEnter2D(Collision2D other)
+        {
+            // GetHittable component, call Hit(params);
+            if (_projectileActive) _audioService.PlaySound(ref _params.wallImpactSound, out _);
+            _projectileActive = false;
+            Direction = Vector2.zero;
         }
         
         // Return the projectile to it's bag.
         void Return()
         {
-            tempEvent.Invoke("World!");
+            _projectileActive = false;
             StopCoroutine(_timerRoutine);
             _anim.Stop();
             Direction = Vector2.zero;
             ReturnToBag(this);
-        }
-
-        public void PrintString(string s)
-        {
-            Debug.Log(s);
         }
     }
 }

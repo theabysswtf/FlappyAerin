@@ -15,8 +15,8 @@ MonoBehaviour:
   projectileBase: {fileID: 1931342039618655939, guid: 0409b08eb7bea3e4eb71732eff4d3780, type: 3}
   shotDirection: {x: 3, y: -1}
   jumpForce: 10
-  maxJumpDuration: 0.2
-  gravity: 38
-  glideGravity: 28
-  maxGlideSpeed: -8
-  maxFallSpeed: -16
+  maxJumpDuration: 0.1
+  gravity: 50
+  glideGravity: 35
+  maxGlideSpeed: -10
+  maxFallSpeed: -20
