@@ -36,8 +36,8 @@ namespace Projectile
 
         public void CreateProjectile(ref ProjectileParams p, Vector2 position, Vector2 dir, out Projectile projectile)
         {
-            var newShot = _bag.Get();
-            newShot.Init(ref p, position, dir);
+            Projectile newShot = _bag.Get();
+            newShot.Init(ref p, position, dir, sceneRoot);
             projectile = newShot;
         }
     }

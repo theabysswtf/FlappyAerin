@@ -17,7 +17,7 @@ namespace SpriteAnimator
         public Sprite Get(int index)
         {
             // AnimComplete Event raised from here!
-            var currentFrame = (looping) ? (index) % frames.Count : Mathf.Min(index, frames.Count - 1);
+            int currentFrame = (looping) ? (index) % frames.Count : Mathf.Min(index, frames.Count - 1);
             return frames[currentFrame];
         }
     

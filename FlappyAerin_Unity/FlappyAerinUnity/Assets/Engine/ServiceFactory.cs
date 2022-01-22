@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEngine;
 
 namespace Engine
 {
@@ -13,6 +14,9 @@ namespace Engine
         {
             return (T) Services[typeof(T)];
         }
+        
+        // Method to remove service!
+        // Each object should call this on their way out!
     }
 
     public interface IService { }

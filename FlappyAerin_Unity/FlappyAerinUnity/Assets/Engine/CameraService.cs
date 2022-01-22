@@ -25,7 +25,7 @@ namespace Engine
         {
             get
             {
-                var pixelWidth = Cam.pixelWidth;
+                int pixelWidth = Cam.pixelWidth;
                 return new Vector2(pixelWidth, pixelWidth / Cam.aspect);
             }
         }
@@ -33,7 +33,7 @@ namespace Engine
         {
             get
             {
-                var bounds = Resolution / 2.0f;
+                Vector2 bounds = Resolution / 2.0f;
                 bounds /= 64.0f;
                 return bounds;
             }
@@ -41,7 +41,7 @@ namespace Engine
 
         public Vector2 ScreenToWorld (Vector2 screen)
         {
-            var scr = screen - Resolution / 2.0f;
+            Vector2 scr = screen - Resolution / 2.0f;
             scr /= 64.0f;
             return scr;
         }

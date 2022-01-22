@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -33,7 +34,6 @@ namespace Engine
         {
             _fifoMapStack.Push(_playerInput.currentActionMap);
             _playerInput.currentActionMap = map;
-            Debug.Log("Changed to " + _playerInput.currentActionMap.name);
         }
         public InputActionMap PopMap()
         {
@@ -44,7 +44,6 @@ namespace Engine
             }
             if (_playerInput.currentActionMap != current)
                 _playerInput.currentActionMap = current;
-            Debug.Log("Changed to " + _playerInput.currentActionMap.name);
             return current;   
         }
         public void SetDefaultMap(InputActionMap map)
@@ -66,6 +65,11 @@ namespace Engine
         public InputActionMap GetUIMap()
         {
             return GetMapWithName("UI");
-        }       
+        }
+
+        void OnCollisionEnter2D(Collision2D other)
+        {
+            Debug.Log("Hit: " + other.gameObject.name);
+        }
     }
 }

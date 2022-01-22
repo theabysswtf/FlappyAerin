@@ -6,6 +6,6 @@ namespace Map
     public class FloorChunkParams : ScriptableObject
     {
         public Sprite sprite;
-        public Vector2 endPosition;
+        public Vector3 endPosition;
     }
 }

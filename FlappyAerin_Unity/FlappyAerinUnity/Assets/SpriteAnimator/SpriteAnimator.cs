@@ -48,5 +48,10 @@ namespace SpriteAnimator
             _renderer.sprite = Anim.Get(++_currentFrame);
             TimeOfLastFrame = AdjustedTime;
         }
+
+        public void ToggleVisible(bool visible)
+        {
+            _renderer.enabled = visible;
+        }
     }
 }

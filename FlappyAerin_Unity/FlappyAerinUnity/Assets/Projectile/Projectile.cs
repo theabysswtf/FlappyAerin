@@ -1,8 +1,11 @@
 using System.Collections;
 using Audio;
 using Engine;
+using Map;
 using Tools;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Projectile
 {
@@ -16,6 +19,7 @@ namespace Projectile
         /// Parameters
         /// </summary>
         ProjectileParams _params;
+        MapMovementParams _mapParams;
         SpriteAnimator.SpriteAnimator _anim;
         Coroutine _timerRoutine;
         
@@ -28,30 +32,36 @@ namespace Projectile
         /// Properties
         /// </summary>
         public ReturnDelegate ReturnToBag { get; set; }
-        Vector2 Direction { get; set; }
+        Vector3 Direction { get; set; }
         float LifeStartTime { get; set; }
         float EndTime => LifeStartTime + _params.lifetime;
 
         /// <summary>
         /// Variables
         /// </summary>
+        public UnityEvent impactEvent;
+        Rigidbody2D _rb;
         bool _projectileActive;
+        float _speed;
 
         void Awake()
         {
+            _mapParams = ServiceFactory.GetService<IMapService>().MapParams;
             _anim = new SpriteAnimator.SpriteAnimator(GetComponent<SpriteRenderer>());
             _audioService = ServiceFactory.GetService<IAudioBoxService>();
+            _rb = GetComponent<Rigidbody2D>();
         }
         
         /// <summary>
         /// Moves to desired position, sets direction + all params
         /// </summary>
-        public void Init(ref ProjectileParams p, Vector2 position, Vector2 dir)
+        public void Init(ref ProjectileParams p, Vector2 position, Vector2 dir, Transform origin)
         {
             _params = p;
             _projectileActive = true;
             Direction = dir;
             transform.position = position;
+            transform.SetParent(origin);
             _anim.SetAnim(_params.spriteAnim);
             _timerRoutine = StartCoroutine(Countdown());
             _anim.Play(0);
@@ -68,34 +78,32 @@ namespace Projectile
             Return();
         }
         
-        void Update()
+        void FixedUpdate()
         {
-            transform.Translate(Direction * (_params.speed * Time.deltaTime));
             _anim.TryStep();
+            _speed = _projectileActive ? _params.speed : _mapParams.speed;
+            _rb.MovePosition(transform.position + Direction * (_speed * Time.deltaTime));
+        }
+
+        void Expend()
+        {
+            impactEvent.Invoke();
+            _projectileActive = false;
+            _anim.Stop();
+            Direction = Vector2.left * _mapParams.speed;
         }
         
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            // GetHittable component, call Hit(params).
-            if (_projectileActive) _audioService.PlaySound(ref _params.impactSound, out _);
-            _projectileActive = false;
-            Direction = Vector2.zero;
-        }
-        void OnCollisionEnter2D(Collision2D other)
+        void OnCollisionEnter2D(Collision2D other) // This handles any practical object impacts
         {
             // GetHittable component, call Hit(params);
             if (_projectileActive) _audioService.PlaySound(ref _params.wallImpactSound, out _);
-            _projectileActive = false;
-            Direction = Vector2.zero;
+            Expend();
         }
         
         // Return the projectile to it's bag.
         void Return()
         {
-            _projectileActive = false;
             StopCoroutine(_timerRoutine);
-            _anim.Stop();
-            Direction = Vector2.zero;
             ReturnToBag(this);
         }
     }

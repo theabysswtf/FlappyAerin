@@ -16,7 +16,7 @@ TagManager:
   - Enemy
   - Obstacle
   - Terrain
-  - 
+  - BackgroundBurnable
   - 
   - 
   - 
@@ -38,6 +38,24 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 1914655017
+    locked: 0
+  - name: BackgroundHittable
+    uniqueID: 2698223871
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Obstacle
+    uniqueID: 2406868747
+    locked: 0
+  - name: Player
+    uniqueID: 4026556171
+    locked: 0
+  - name: Projectile
+    uniqueID: 3284162673
+    locked: 0
+  - name: ForegroundParticles
+    uniqueID: 2380724977
     locked: 0

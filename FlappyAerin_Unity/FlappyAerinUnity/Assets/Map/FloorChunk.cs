@@ -1,31 +1,25 @@
-using Tools;
 using UnityEngine;
 
 namespace Map
 {
-    public class FloorChunk
+    public class FloorChunk : Movable
     {
         
-        public Vector2 EndPosition => (Vector2)(_transform.localPosition) + _params.endPosition;
+        public Vector3 EndPosition => transform.localPosition + _params.endPosition;
+        public Vector3 StartPosition => transform.localPosition;
+        public Bounds Bounds => _collider.bounds;
 
-        readonly Transform _transform;
         readonly SpriteRenderer _renderer;
-        readonly MapMovementParams _mapParams;
+        readonly Collider2D _collider;
         FloorChunkParams _params;
 
         public FloorChunk(GameObject obj, ref MapMovementParams p)
         {
-            _transform = obj.GetComponent<Transform>();
+            transform = obj.GetComponent<Transform>();
+            mapParams = p;
+            
             _renderer = obj.GetComponent<SpriteRenderer>();
-            _mapParams = p;
-        }
-        public void SetPosition(Vector3 pos)
-        {
-            _transform.localPosition = pos;
-        }
-        public void MoveUnsafe(Vector3 delta)
-        {
-            _transform.position += _mapParams.speed * delta;
+            _collider = obj.GetComponent<Collider2D>();
         }
         public void LoadParams(FloorChunkParams p)
         {

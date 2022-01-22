@@ -29,7 +29,7 @@ namespace SpriteAnimator
         void Start()
         {
             _controlMap = ServiceFactory.GetService<IInputService>().GetPlayerMap();
-            var pauseAction = _controlMap.FindAction("Test");
+            InputAction pauseAction = _controlMap.FindAction("Test");
             pauseAction.started += Toggle;
         }
 

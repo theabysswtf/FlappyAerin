@@ -55,7 +55,7 @@ namespace Tools
 
         public T Get()
         {
-            return (Bag.TryTake(out var t)) ? t : Generate();
+            return (Bag.TryTake(out T t)) ? t : Generate();
         }
 
         public void Return(IReusable t)
