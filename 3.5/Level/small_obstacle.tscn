@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Level/Obstacle.gd" type="Script" id=1]
+[ext_resource path="res://Level/Pillar.png" type="Texture" id=3]
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 48, 192 )
+
+[sub_resource type="RectangleShape2D" id=8]
+extents = Vector2( 10, 145 )
+
+[node name="small_obstacle" type="Node2D"]
+script = ExtResource( 1 )
+point_value = 5
+
+[node name="Top" type="Area2D" parent="."]
+position = Vector2( -32, 0 )
+rotation = 7.15847e-05
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Top"]
+position = Vector2( -0.00228882, -191.997 )
+shape = SubResource( 7 )
+
+[node name="Sprite" type="Sprite" parent="Top"]
+position = Vector2( -0.0137405, -191.997 )
+rotation = 3.14159
+texture = ExtResource( 3 )
+
+[node name="Bot" type="Area2D" parent="."]
+position = Vector2( -32, 0 )
+rotation = 7.15847e-05
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bot"]
+position = Vector2( 0.00228882, 192.003 )
+shape = SubResource( 7 )
+
+[node name="Sprite" type="Sprite" parent="Bot"]
+position = Vector2( 0.0137405, 192.003 )
+texture = ExtResource( 3 )
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2( 10, 0 )
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource( 8 )
+
+[connection signal="body_entered" from="Top" to="." method="_on_DamageBox_body_entered"]
+[connection signal="body_entered" from="Bot" to="." method="_on_DamageBox_body_entered"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_Area2D_body_entered"]

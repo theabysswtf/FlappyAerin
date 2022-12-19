@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://UIAnimations/kongtext.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://PointUI.gd" type="Script" id=2]
+
+[sub_resource type="DynamicFont" id=10]
+size = 60
+outline_size = 2
+outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 1 )
+
+[sub_resource type="Theme" id=11]
+Label/fonts/font = SubResource( 10 )
+
+[sub_resource type="StyleBoxFlat" id=12]
+bg_color = Color( 0, 0, 0, 0.823529 )
+
+[node name="GameUI" type="Node2D"]
+z_index = 2048
+z_as_relative = false
+script = ExtResource( 2 )
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+margin_right = 960.0
+margin_bottom = 96.0
+theme = SubResource( 11 )
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+margin_left = 450.0
+margin_top = 17.0
+margin_right = 510.0
+margin_bottom = 78.0
+custom_styles/panel = SubResource( 12 )
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer"]
+margin_right = 60.0
+margin_bottom = 61.0
+text = "0"
