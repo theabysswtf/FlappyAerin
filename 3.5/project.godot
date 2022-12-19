@@ -20,7 +20,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="3.5"
+config/name="Flappy Aerin"
 run/main_scene="res://Scenes/World.tscn"
 config/icon="res://icon.png"
 
@@ -35,6 +35,7 @@ LevelSwitcher="*res://Common/LevelSwitcher.tscn"
 
 window/size/width=960
 window/size/height=540
+window/size/resizable=false
 
 [global]
 

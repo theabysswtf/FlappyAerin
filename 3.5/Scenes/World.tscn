@@ -185,7 +185,7 @@ _gravity = 2000.0
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Dragon"]
 frames = SubResource( 4 )
 animation = "idle"
-frame = 3
+frame = 1
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Dragon"]
